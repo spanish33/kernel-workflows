@@ -43,7 +43,7 @@ jobs:
       - name: Clone Clang Toolchain
         if: steps.cache-clang.outputs.cache-hit != 'true'
         run: |
-          git clone --depth=1 --branch=android16-release https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86 clang-prebuilts
+          git clone --depth=1 --branch=android15-release https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86 clang-prebuilts
           mkdir -p ./toolchain
           mv clang-prebuilts/clang-r498229b ./toolchain/clang-r498229b
           rm -rf clang-prebuilts
