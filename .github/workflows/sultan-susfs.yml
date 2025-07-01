@@ -58,7 +58,6 @@ jobs:
           echo "PATH=$HOME/gnu-toolchain/arm-gnu-toolchain-14.2.rel1-x86_64-aarch64-none-linux-gnu/bin:$PATH" >> $GITHUB_ENV
           echo "CROSS_COMPILE=aarch64-none-linux-gnu-" >> $GITHUB_ENV
           echo "STRIP=aarch64-none-linux-gnu-strip" >> $GITHUB_ENV
-          echo "CONFIG=${{ env.REPO }}" >> $GITHUB_ENV
 
       - name: Check compiler version
         run: aarch64-none-linux-gnu-gcc --version   
@@ -78,7 +77,7 @@ jobs:
       - name: Add KernelSU
         run: |
           echo "Changing to configuration directory"
-          cd "${{ env.CONFIG }}"
+          cd "${{env.REPO}}"
           echo "Adding KernelSU..."
           curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -
 
@@ -102,7 +101,7 @@ jobs:
           
 
           echo "Changing to configuration directory"
-          cd "${{ env.CONFIG }}"
+          cd "${{env.REPO}}"
           echo "Applying SUSFS patches..."
           patch -p1 --forward < 50_add_susfs_in_gki-android14-6.1.patch || true
           patch -p0 --forward < uname.patch || true
@@ -124,13 +123,13 @@ jobs:
       - name: Apply KSU Hooks from 0ctobot
         run: |
           echo "Applying hooks"
-          cd "${{ env.CONFIG }}"
+          cd "${{env.REPO}}"
           patch -p1 --forward < 0ctobot_hooks.patch || true
 
    
       - name: Apply SUSFS and LTO Configs
         run: |
-          cd "${{ env.CONFIG }}"
+          cd "${{env.REPO}}"
           DEFCONFIG=arch/arm64/configs/${{ env.CODENAME }}_defconfig
 
           # Remove existing conflicting LTO lines
@@ -173,7 +172,7 @@ jobs:
 
       - name: Build the Kernel
         run: |
-         cd "${{ env.CONFIG }}"
+         cd "${{env.REPO}}"
          # Generate base defconfig
          make O=out ARCH=arm64 ${{ env.CODENAME }}_defconfig    
          make O=out ARCH=arm64 CROSS_COMPILE=aarch64-none-linux-gnu- \
@@ -182,7 +181,7 @@ jobs:
 
       - name: Copy Images
         run: |
-          cd "${{ env.CONFIG }}"
+          cd "${{env.REPO}}"
           cp out/arch/arm64/boot/Image.lz4 ../AnyKernel3/Image.lz4
           cat out/google-devices/zuma/dts/*.dtb > ../AnyKernel3/dtb
 
